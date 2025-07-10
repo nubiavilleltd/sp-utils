@@ -99,7 +99,60 @@
       );
 
       if (!res.ok) throw new Error(`Delete failed: ${await res.text()}`);
-    }
+    },
+
+    async uploadFileToLibrary(libraryName, file, folderName = "") {
+      const digest = await this.getDigest();
+
+      const serverRelativeUrl = `${this.siteUrl.replace(
+        location.origin,
+        ""
+      )}/${libraryName}/${folderName}`.replace(/\/+$/, "");
+
+      const uploadUrl = `${
+        this.siteUrl
+      }/_api/web/GetFolderByServerRelativeUrl('${serverRelativeUrl}')/Files/add(url='${encodeURIComponent(
+        file.name
+      )}',overwrite=true)`;
+
+      const res = await fetch(uploadUrl, {
+        method: "POST",
+        headers: {
+          Accept: "application/json;odata=verbose",
+          "X-RequestDigest": digest,
+        },
+        body: file,
+      });
+
+      if (!res.ok) throw new Error(`Upload failed: ${await res.text()}`);
+      return res.json();
+    },
+
+    async createFolder(libraryName, folderName) {
+      const digest = await this.getDigest();
+
+      const serverRelativeUrl = `${this.siteUrl.replace(
+        location.origin,
+        ""
+      )}/${libraryName}/${folderName}`.replace(/\/+$/, "");
+
+      const res = await fetch(`${this.siteUrl}/_api/web/folders`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json;odata=verbose",
+          "Content-Type": "application/json;odata=verbose",
+          "X-RequestDigest": digest,
+        },
+        body: JSON.stringify({
+          __metadata: { type: "SP.Folder" },
+          ServerRelativeUrl: serverRelativeUrl,
+        }),
+      });
+
+      if (!res.ok)
+        throw new Error(`Folder creation failed: ${await res.text()}`);
+      return res.json();
+    },
   };
 
   global.SPUtils = SharePointUtils;

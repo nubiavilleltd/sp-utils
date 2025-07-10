@@ -11,9 +11,11 @@ No frameworks or external dependencies required. Built for modern SharePoint pag
 - 🔹 Create new list items
 - 🔹 Update existing items
 - 🔹 Delete existing items
+- 🔹 Upload files to Document Libraries (with optional folder support)
+- 🔹 Create folders within Document Libraries
 - 🔹 Automatically retrieves request digest and list metadata
 - 🔹 Works with modern `async/await`
-- 🔹 Lightweight and framework agnostic
+- 🔹 Lightweight and framework agnostic (no dependencies)
 
 ---
 
@@ -144,6 +146,40 @@ Deletes an item from a SharePoint list by ID.
 
 ```js
 await SPUtils.deleteItem("Tasks", 7);
+```
+
+---
+
+### `SPUtils.uploadFileToLibrary(libraryName: string, file: File, folderName?: string): Promise<void>`
+
+Uploads a file to a SharePoint Document Library.
+
+You can specify an optional folder name (inside the document library) where the file should be uploaded. If not provided, the file will be uploaded to the root of the library.
+
+| Param       | Type             | Description                                                  |
+|-------------|------------------|--------------------------------------------------------------|
+| libraryName | string           | Name of the SharePoint Document Library (e.g., "Documents")  |
+| file        | File             | File object to be uploaded                                   |
+| folderName  | string (optional)| Name of the folder within the library (e.g., "Resumes")      |
+
+```js
+await SPUtils.uploadFileToLibrary("Documents", {},  "Resumes");
+```
+
+---
+
+
+### `SPUtils.createFolder(libraryName: string, folderName: string): Promise<void>`
+
+Create a folder in Sharepoint's Document library
+
+| Param       | Type   | Description                                                  |
+|-------------|--------|--------------------------------------------------------------|
+| libraryName | string | Name of the SharePoint Document Library (e.g., "Documents")  |
+| folderName  | string | Name of the folder to create (e.g., "Applications")          |
+
+```js
+await SPUtils.createFolder("Documents", "Applications");
 ```
 
 ---
